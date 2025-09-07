@@ -1,1 +1,5 @@
-QuantumLeap AI - Institutional Trend ForecasterLive Application URL: https://stock-predictor-api-516063785117.asia-south1.run.appProject OverviewThis is an end-to-end machine learning application that forecasts stock market trends. It was built over a weekend as an intensive mentorship exercise, demonstrating a full MLOps pipeline from data acquisition to a live, interactive web service on Google Cloud Run.Core Features:Dual-Analysis System: Uses a quantitative XGBoost model for UP/DOWN prediction and the qualitative Gemini LLM for market analysis.Live API Service: The backend is a FastAPI application, containerized with Docker.Cloud-Native Deployment: Deployed on Google Cloud Run with an automated cloud build process.Interactive UI: A sophisticated and responsive single-page web application serves as the project's frontend.Technology StackBackend: Python, FastAPI, XGBoost, Google Gemini APIFrontend: HTML, Tailwind CSS, Vanilla JavaScriptDevOps: Docker, Google Cloud Run, Google Cloud Build, GitThis project demonstrates a complete, professional workflow for building and deploying a real-world machine learning application.
+# QuantumLeap AI - Stock Trend Forecaster
+
+This is an end-to-end machine learning application.
+
+**Live Demo:** https://stock-predictor-api-516063785117,asia-south1.run.app
