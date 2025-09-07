@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumLeap AI | Institutional Trend Forecaster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg-primary: #0f172a;
+            --color-bg-secondary: #1e293b;
+            --color-border: #334155;
+            --color-interactive: #3b82f6;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --color-ai-accent: #8b5cf6;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .form-input { @apply w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-interactive transition-all; }
+        .tooltip-trigger { @apply relative group cursor-help; }
+        .tooltip-content { @apply invisible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 text-xs text-center rounded-md bg-slate-900 border border-slate-700 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10; }
+        .result-card, .ai-card {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            opacity: 0;
+            transform: translateY(20px);
+            visibility: hidden;
+        }
+        .result-card.show, .ai-card.show {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-brand-primaryBg text-slate-200">
+
+    <div class="container mx-auto max-w-7xl w-full min-h-screen flex flex-col justify-center p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">QuantumLeap AI</h1>
+            <p class="mt-2 text-lg leading-8 text-slate-400">Institutional Trend Forecaster</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+
+            <!-- Input Section -->
+            <section class="bg-brand-secondaryBg rounded-xl border border-brand-border shadow-2xl">
+                <div class="p-6 border-b border-brand-border">
+                    <h2 class="text-xl font-semibold text-white">Model Input Parameters</h2>
+                </div>
+                <form id="prediction-form" class="p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+                        <!-- Corrected Field Names (Uppercase) -->
+                        <div><label for="Open" class="text-sm font-medium text-slate-300 mb-1 flex items-center">Open Price <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">The price at the start of the trading day.</span></span></label><input type="number" step="any" id="Open" name="Open" class="form-input" required></div>
+                        <div><label for="High" class="text-sm font-medium text-slate-300 mb-1 flex items-center">High Price <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">The highest price reached during the day.</span></span></label><input type="number" step="any" id="High" name="High" class="form-input" required></div>
+                        <div><label for="Low" class="text-sm font-medium text-slate-300 mb-1 flex items-center">Low Price <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">The lowest price reached during the day.</span></span></label><input type="number" step="any" id="Low" name="Low" class="form-input" required></div>
+                        <div><label for="Close" class="text-sm font-medium text-slate-300 mb-1 flex items-center">Close Price <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">The final price at the end of the trading day.</span></span></label><input type="number" step="any" id="Close" name="Close" class="form-input" required></div>
+                        <div class="sm:col-span-2"><label for="Volume" class="text-sm font-medium text-slate-300 mb-1 flex items-center">Volume <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">Total number of shares traded.</span></span></label><input type="number" id="Volume" name="Volume" class="form-input" required></div>
+                        <div><label for="MA50" class="text-sm font-medium text-slate-300 mb-1 flex items-center">MA50 <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">50-Day Moving Average. Indicates short-term trend.</span></span></label><input type="number" step="any" id="MA50" name="MA50" class="form-input" required></div>
+                        <div><label for="MA200" class="text-sm font-medium text-slate-300 mb-1 flex items-center">MA200 <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">200-Day Moving Average. Indicates long-term trend.</span></span></label><input type="number" step="any" id="MA200" name="MA200" class="form-input" required></div>
+                        <div><label for="MA_Spread" class="text-sm font-medium text-slate-300 mb-1 flex items-center">MA Spread <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">Difference between MA50 and MA200.</span></span></label><input type="number" step="any" id="MA_Spread" name="MA_Spread" class="form-input" required></div>
+                        <div><label for="Volatility_20D" class="text-sm font-medium text-slate-300 mb-1 flex items-center">Volatility (20D) <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">20-Day price volatility (standard deviation).</span></span></label><input type="number" step="any" id="Volatility_20D" name="Volatility_20D" class="form-input" required></div>
+                        <div class="sm:col-span-2"><label for="ROC_5D" class="text-sm font-medium text-slate-300 mb-1 flex items-center">ROC (5D, %) <span class="tooltip-trigger ml-2 text-slate-500">ⓘ<span class="tooltip-content">5-Day Rate of Change. Measures momentum.</span></span></label><input type="number" step="any" id="ROC_5D" name="ROC_5D" class="form-input" required></div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-brand-border space-y-4">
+                        <button type="submit" id="forecast-button" class="w-full flex items-center justify-center bg-brand-interactive hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 disabled:opacity-50">
+                            <span class="btn-text">Forecast Trend</span>
+                            <span class="btn-loader hidden"><svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg></span>
+                        </button>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button type="button" id="sample-data-button" class="w-full bg-slate-600 hover:bg-slate-500 text-slate-200 font-semibold py-2 px-4 rounded-md transition-colors">Sample Data</button>
+                            <button type="button" id="clear-button" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-2 px-4 rounded-md transition-colors">Clear</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section class="flex flex-col space-y-6">
+                <div id="result-card" class="result-card bg-brand-secondaryBg rounded-xl border border-brand-border shadow-2xl p-6 text-center">
+                    <!-- Dynamic content here -->
+                </div>
+                <div id="ai-card" class="ai-card bg-brand-secondaryBg rounded-xl border border-brand-border shadow-2xl p-6">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                        <svg class="h-6 w-6 text-brand-ai-accent mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.562L16.25 22.5l-.648-1.938a3.375 3.375 0 00-2.6-2.6L11.25 18l1.938-.648a3.375 3.375 0 002.6-2.6l.648-1.938 1.938.648a3.375 3.375 0 002.6 2.6l1.938.648-1.938.648a3.375 3.375 0 00-2.6 2.6z" /></svg>
+                        AI Analyst Commentary
+                    </h3>
+                    <div id="ai-content" class="text-slate-300 leading-relaxed"></div>
+                </div>
+                <div id="placeholder" class="flex items-center justify-center text-center text-slate-500 border-2 border-dashed border-brand-border rounded-lg py-24 px-6">
+                    <div>
+                        <h3 class="mt-2 text-sm font-semibold text-slate-400">Awaiting Input</h3>
+                        <p class="mt-1 text-sm text-slate-500">Results will be displayed here.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('prediction-form');
+            const forecastButton = document.getElementById('forecast-button');
+            const btnText = forecastButton.querySelector('.btn-text');
+            const btnLoader = forecastButton.querySelector('.btn-loader');
+            const sampleDataButton = document.getElementById('sample-data-button');
+            const clearButton = document.getElementById('clear-button');
+            
+            const resultCard = document.getElementById('result-card');
+            const aiCard = document.getElementById('ai-card');
+            const aiContent = document.getElementById('ai-content');
+            const placeholder = document.getElementById('placeholder');
+            
+            // --- LIVE API URL ---
+            // This is the URL from your successful Google Cloud Run deployment
+            const API_BASE_URL = 'https://stock-predictor-api-516063785117.asia-south1.run.app';
+
+            const sampleData = { "Open": 986.75, "High": 1010.56, "Low": 977.21, "Close": 993.03, "Volume": 31200385, "MA50": 993.53, "MA200": 759.32, "MA_Spread": 234.21, "Volatility_20D": 20.15, "ROC_5D": 2.51 };
+            let lastFormData = {};
+
+            const resetUI = () => {
+                resultCard.innerHTML = '';
+                aiContent.innerHTML = '';
+                resultCard.classList.remove('show');
+                aiCard.classList.remove('show');
+                placeholder.style.display = 'flex';
+            };
+
+            sampleDataButton.addEventListener('click', () => {
+                for (const key in sampleData) {
+                    if (form.elements[key]) form.elements[key].value = sampleData[key];
+                }
+                resetUI();
+            });
+
+            clearButton.addEventListener('click', () => {
+                form.reset();
+                resetUI();
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                resetUI();
+                setLoading(true);
+                placeholder.style.display = 'none';
+
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => { data[key] = key === 'Volume' ? parseInt(value) : parseFloat(value); });
+                lastFormData = data;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/predict`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    });
+                    if (!response.ok) throw new Error(`Prediction API Error: ${response.statusText}`);
+                    const result = await response.json();
+                    displayXGBoostResult(result);
+                } catch (error) {
+                    console.error("Prediction Error:", error);
+                    displayError(resultCard, error.message);
+                } finally {
+                    setLoading(false);
+                }
+            });
+
+            const setLoading = (isLoading) => {
+                forecastButton.disabled = isLoading;
+                btnText.classList.toggle('hidden', isLoading);
+                btnLoader.classList.toggle('hidden', !isLoading);
+            };
+
+            const displayXGBoostResult = (result) => {
+                const isUp = result.prediction === 1;
+                const trendColor = isUp ? 'var(--color-success)' : 'var(--color-danger)';
+                const icon = isUp ? `<svg class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" /></svg>` : `<svg class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6L9 12.75l4.306-4.307a11.95 11.95 0 015.814 5.519l2.74 1.22m0 0l-5.94 2.28m5.94-2.28l-2.28-5.941" /></svg>`;
+                
+                resultCard.style.borderColor = trendColor;
+                resultCard.innerHTML = `
+                    <div style="color: ${trendColor}">${icon}</div>
+                    <p class="text-4xl font-bold mt-2" style="color: ${trendColor}">${result.prediction_label.toUpperCase()} TREND</p>
+                    <p class="text-slate-400 mt-1">XGBoost model forecasts a ${result.prediction_label.toLowerCase()} market trend in 5 days.</p>
+                    <div class="mt-6 w-full pt-4 border-t border-brand-border">
+                        <button id="ai-button" class="w-full flex items-center justify-center bg-brand-ai-accent hover:bg-purple-500 text-white font-bold py-3 px-4 rounded-md transition-all duration-300">
+                            <span class="ai-btn-text">✨ Get AI Analyst Insight</span>
+                            <span class="ai-btn-loader hidden"><svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg></span>
+                        </button>
+                    </div>
+                `;
+                resultCard.classList.add('show');
+                document.getElementById('ai-button').addEventListener('click', handleGeminiRequest);
+            };
+
+            const handleGeminiRequest = async () => {
+                const aiButton = document.getElementById('ai-button');
+                aiButton.disabled = true;
+                aiButton.querySelector('.ai-btn-text').classList.add('hidden');
+                aiButton.querySelector('.ai-btn-loader').classList.remove('hidden');
+
+                aiCard.classList.add('show');
+                aiContent.innerHTML = `<div class="flex items-center justify-center p-4"><svg class="animate-spin h-6 w-6 text-brand-ai-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg></div>`;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/analyze`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(lastFormData),
+                    });
+                    if (!response.ok) throw new Error(`Gemini API Error: ${response.statusText}`);
+                    const result = await response.json();
+                    if (result.error) throw new Error(result.error);
+                    aiContent.innerHTML = `<p>${result.analysis.replace(/\n/g, '<br>')}</p>`;
+                } catch (error) {
+                    console.error("Gemini Error:", error);
+                    displayError(aiContent, error.message);
+                } finally {
+                    aiButton.disabled = false;
+                    aiButton.querySelector('.ai-btn-text').classList.remove('hidden');
+                    aiButton.querySelector('.ai-btn-loader').classList.add('hidden');
+                }
+            };
+
+            const displayError = (element, message) => {
+                element.innerHTML = `<p class="text-brand-danger">Error: ${message}</p>`;
+                if (!element.classList.contains('show')) {
+                    element.classList.add('show');
+                }
+                if (element === resultCard) {
+                   placeholder.style.display = 'none';
+                }
+            };
+        });
+    </script>
+</body>
+</html>
+

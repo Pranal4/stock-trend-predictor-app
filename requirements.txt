@@ -1,0 +1,12 @@
+pandas
+numpy
+yfinance
+scikit-learn
+xgboost
+fastapi
+uvicorn[standard]
+jupyterlab
+matplotlib
+seaborn
+joblib
+httpx
