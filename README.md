@@ -41,7 +41,7 @@ This project is a comprehensive, end-to-end machine learning application designe
 10. **Documentation:** Created this README to document the project's architecture, process, and technologies.
 
 ---
-*This project was developed over a weekend as an intensive, end-to-end mentorship exercise.*
+*This is an independent portfolio project designed to showcase the complete, end-to-end lifecycle of a modern machine learning application.*
 
 
 
